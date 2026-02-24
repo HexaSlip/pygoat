@@ -456,13 +456,11 @@ def cmd_lab2(request):
             val=request.POST.get('val')
             
             print(val)
-
-			import ast
             try:
+				import ast
                 output = ast.literal_eval(val)
-            except:
+			except Exception:
                 output = "Something went wrong"
-                return render(request,'Lab/CMD/cmd_lab2.html',{"output":output})
             print("Output = ", output)
             return render(request,'Lab/CMD/cmd_lab2.html',{"output":output})
         else:
