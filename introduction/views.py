@@ -455,18 +455,19 @@ def cmd_lab2(request):
         if (request.method=="POST"):
             val=request.POST.get('val')
             
-            print(val)
-            try:
-				import ast
-                output = ast.literal_eval(val)
+			print(val)
+			try:
+    			import ast
+    			output = ast.literal_eval(val)
 			except Exception:
-                output = "Something went wrong"
-            print("Output = ", output)
-            return render(request,'Lab/CMD/cmd_lab2.html',{"output":output})
-        else:
-            return render(request, 'Lab/CMD/cmd_lab2.html')
-    else:
-        return redirect('login')
+    			output = "Something went wrong"
+
+			print("Output = ", output)
+			return render(request, 'Lab/CMD/cmd_lab2.html', {"output": output})	
+		else:
+        	return render(request, 'Lab/CMD/cmd_lab2.html')
+	else:
+    	return redirect('login')   
 
 #******************************************Broken Authentication**************************************************#
 
