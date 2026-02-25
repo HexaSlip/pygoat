@@ -459,7 +459,7 @@ def cmd_lab2(request):
             print(val)
             try:
                 output = ast.literal_eval(val)
-		  except:
+		    except:
                 output = "Something went wrong"
                 return render(request,'Lab/CMD/cmd_lab2.html',{"output":output})
             print("Output = ", output)
