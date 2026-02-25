@@ -33,7 +33,6 @@ from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from PIL import Image, ImageMath
 from requests.structures import CaseInsensitiveDict
-import ast
 
 from .forms import NewUserForm
 from .models import (FAANG, AF_admin, AF_session_id, Blogs, CF_user, authLogin,
@@ -458,8 +457,8 @@ def cmd_lab2(request):
             
             print(val)
             try:
-                output = ast.literal_eval(val)
-		    except:
+                output = eval(val)
+            except:
                 output = "Something went wrong"
                 return render(request,'Lab/CMD/cmd_lab2.html',{"output":output})
             print("Output = ", output)
