@@ -18,6 +18,7 @@ Table of Contents
    * [Uninstallation](#uninstallation)
    * [Solutions](/Solutions/solution.md)
    * [For Developers](/docs/dev_guide.md)
+   * [My Contributions](#my-personal-contributions-and-experiences) 
 
 ## Installation
 
@@ -151,3 +152,60 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
+# My Personal Contributions and Experiences 
+
+## 🔐 CodeQL Vulnerability Fix: Code Injection via ``eval()``
+
+The first vulnerability I tackled was in the ``introduction/view.py`` file around line 460. The function used ``eval()`` on user-controlled input, creating a direct code-injection risk. CodeQL flagged this as a high-severity issue ``eval()`` executes whatever string it receives, meaning a malicious user could run arbitrary Python code on the server.
+
+Fixing this vulnerability taught me far more than just "replace eval". 
+The process involved:
+* understanding how CodeQL traces data flow from user input to dangerous sinks
+* learning why ``eval()`` is unsafe and how code injection actually happens
+* debugging indentation issues caused by mixed tabs/spaces
+* untangling nested Django view logic to place the fix correctly
+* restarting the file more than once to escape indentation chaos
+* validating the fix by re-running CodeQL and watching the alert disappear
+
+To remediate the issue, I replaced `` eval()`` with ``ast.literal_eval``, which safely parses Python literals without executing arbitrary code. This preserves the intended functionality while eliminating the injection risk.
+
+This was a small code change, but a meaningful step in understanding secure coding practice, static analysis, and how vulnerabilities emerge in real applications. 
+
+### 🔍 Before (vulnerable code)
+```
+print(val)
+try:
+    output = eval(val)   # ❌ Unsafe: executes arbitrary code
+except:
+    output = "Something went wrong"
+return render(request, 'Lab/CMD/cmd_lab2.html', {"output": output})
+```
+### ✅ After (safe code)
+``` 
+import ast
+
+print(val)
+try:
+    output = ast.literal_eval(val)   # ✔ Safe: parses literals without executing code
+except Exception:
+    output = "Something went wrong"
+return render(request, 'Lab/CMD/cmd_lab2.html', {"output": output}) 
+```
+### 📘 What I Learned
+
+- How CodeQL identifies unsafe data flows from user input to dangerous functions  
+- Why `eval()` is inherently unsafe and how code injection vulnerabilities occur  
+- How to use `ast.literal_eval` as a secure alternative  
+- How indentation issues (tabs vs. spaces) can break Python logic  
+- How Django view functions process requests and return responses  
+- How to validate a fix by re-running CodeQL and confirming the alert disappears  
+- The value of restarting a file cleanly when indentation chaos becomes unmanageable
+
+ ### 🚀 Future Improvements
+
+- Continue reviewing PyGoat for additional CodeQL alerts  
+- Document each vulnerability fix as a separate case study  
+- Expand the CodeQL workflow to include custom queries  
+- Add unit tests to validate safe input handling  
+- Explore other static analysis tools (Bandit, Semgrep) for comparison
